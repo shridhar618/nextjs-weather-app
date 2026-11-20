@@ -1,0 +1,295 @@
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  /* Light theme (default) */
+  color-scheme: light;
+  --bg1: #e0f2fe;
+  --bg2: #93c5fd;
+  --bg1-night: #c7d2fe;  /* used when it's night in the searched city */
+  --bg2-night: #818cf8;
+  --card: rgba(255, 255, 255, 0.62);
+  --border: rgba(15, 23, 42, 0.1);
+  --surface: rgba(15, 23, 42, 0.05);
+  --track: rgba(15, 23, 42, 0.12);
+  --text: #0f172a;
+  --muted: rgba(15, 23, 42, 0.66);
+  --accent: #ffd166;
+  --link: #b45309;
+  --rain: #1d4ed8;
+  --field-bg: #ffffff;
+  --field-text: #0f172a;
+  --field-muted: #64748b;
+  --menu-active: #fff3cc;
+  --spinner-track: rgba(15, 23, 42, 0.15);
+  --icon-shadow: drop-shadow(0 0 0.6px rgba(15, 23, 42, 0.55)) drop-shadow(0 1px 1.5px rgba(15, 23, 42, 0.35));
+  --error-bg: rgba(220, 38, 38, 0.1);
+  --error-border: #dc2626;
+}
+
+/* Dark theme: when chosen explicitly, or when set to Auto and the device prefers dark */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --bg1: #0b1324;
+    --bg2: #1e293b;
+    --bg1-night: #030712;
+    --bg2-night: #111827;
+    --card: rgba(255, 255, 255, 0.06);
+    --border: rgba(255, 255, 255, 0.12);
+    --surface: rgba(255, 255, 255, 0.05);
+    --track: rgba(255, 255, 255, 0.12);
+    --text: #f1f5f9;
+    --muted: rgba(241, 245, 249, 0.68);
+    --link: #ffd166;
+    --rain: #9fd3ff;
+    --field-bg: #1e293b;
+    --field-text: #f1f5f9;
+    --field-muted: #94a3b8;
+    --menu-active: rgba(255, 209, 102, 0.16);
+    --spinner-track: rgba(255, 255, 255, 0.2);
+    --icon-shadow: none;
+    --error-bg: rgba(248, 113, 113, 0.12);
+    --error-border: #f87171;
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg1: #0b1324;
+  --bg2: #1e293b;
+  --bg1-night: #030712;
+  --bg2-night: #111827;
+  --card: rgba(255, 255, 255, 0.06);
+  --border: rgba(255, 255, 255, 0.12);
+  --surface: rgba(255, 255, 255, 0.05);
+  --track: rgba(255, 255, 255, 0.12);
+  --text: #f1f5f9;
+  --muted: rgba(241, 245, 249, 0.68);
+  --link: #ffd166;
+  --rain: #9fd3ff;
+  --field-bg: #1e293b;
+  --field-text: #f1f5f9;
+  --field-muted: #94a3b8;
+  --menu-active: rgba(255, 209, 102, 0.16);
+  --spinner-track: rgba(255, 255, 255, 0.2);
+  --icon-shadow: none;
+  --error-bg: rgba(248, 113, 113, 0.12);
+  --error-border: #f87171;
+}
+
+body {
+  min-height: 100vh;
+  font-family: "Segoe UI", system-ui, -apple-system, Roboto, sans-serif;
+  color: var(--text);
+  background: linear-gradient(135deg, var(--bg1), var(--bg2));
+  display: flex;
+  justify-content: center;
+  padding: 40px 16px;
+  background-attachment: fixed;
+  transition: color 0.3s ease;
+}
+body.night { --bg1: var(--bg1-night); --bg2: var(--bg2-night); }
+
+.app { width: 100%; max-width: 520px; }
+
+.app-header { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 20px; }
+.app-header h1 { font-size: 2.2rem; letter-spacing: 0.5px; }
+.subtitle, .muted { color: var(--muted); }
+
+.search { display: flex; gap: 8px; margin-bottom: 12px; }
+.search-field { position: relative; flex: 1; min-width: 0; }
+.search input {
+  width: 100%;
+  padding: 14px 16px;
+  font-size: 1rem;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: var(--field-bg);
+  color: var(--field-text);
+  outline: none;
+}
+.search input:focus { box-shadow: 0 0 0 3px rgba(255, 209, 102, 0.6); }
+.search button {
+  padding: 0 22px;
+  font-size: 1rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 12px;
+  background: var(--accent);
+  color: #222;
+  cursor: pointer;
+  transition: transform 0.1s ease, opacity 0.2s ease;
+}
+.search button:hover { transform: translateY(-1px); }
+.search input::placeholder { color: var(--field-muted); }
+.search .locate { padding: 0 12px; display: grid; place-items: center; background: var(--field-bg); color: var(--field-text); border: 1px solid var(--border); }
+.search button:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+/* ---------- Status: loading + errors ---------- */
+.status:empty { display: none; }
+.status { margin-bottom: 16px; }
+
+.loading {
+  display: flex; align-items: center; justify-content: center; gap: 12px;
+  padding: 18px; border-radius: 12px; background: var(--card);
+}
+.spinner {
+  width: 26px; height: 26px;
+  border: 3px solid var(--spinner-track);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.error {
+  display: flex; gap: 12px; align-items: flex-start;
+  padding: 16px; border-radius: 12px;
+  background: var(--error-bg);
+  border: 1px solid var(--error-border);
+}
+.error .error-icon { font-size: 1.4rem; line-height: 1; }
+.error strong { display: block; margin-bottom: 4px; }
+
+/* ---------- Weather card ---------- */
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 24px;
+  backdrop-filter: blur(8px);
+  animation: fadeIn 0.4s ease;
+}
+@keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+
+
+.card-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
+.card-top h2 { font-size: 1.5rem; }
+
+.weather-icon { width: 96px; height: 96px; flex-shrink: 0; }
+.weather-icon svg { width: 100%; height: 100%; }
+.card svg[role="img"] { filter: var(--icon-shadow); } /* keeps pale icons visible on light backgrounds */
+
+.temp-row { display: flex; align-items: center; gap: 18px; margin: 12px 0 20px; }
+.temperature { font-size: 4rem; font-weight: 300; line-height: 1; }
+.condition { font-size: 1.2rem; font-weight: 600; }
+
+.details { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+.detail {
+  display: flex; flex-direction: column; gap: 2px;
+  padding: 10px 12px; border-radius: 10px;
+  background: var(--surface);
+}
+.detail .label { font-size: 0.8rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; }
+
+.section-title { margin: 22px 0 10px; font-size: 0.85rem; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+
+.hourly {
+  display: flex; gap: 8px; overflow-x: auto; padding-bottom: 6px;
+  scroll-snap-type: x proximity; scrollbar-width: thin;
+}
+.hour {
+  flex: 0 0 64px; scroll-snap-align: start;
+  display: flex; flex-direction: column; align-items: center; gap: 2px;
+  padding: 10px 4px; border-radius: 10px;
+  background: var(--surface); font-size: 0.8rem;
+}
+.hour-temp { font-weight: 600; font-size: 0.95rem; }
+.rain-chance { font-size: 0.75rem; color: var(--rain); white-space: nowrap; }
+
+.forecast { list-style: none; display: flex; flex-direction: column; gap: 4px; }
+.day {
+  display: grid;
+  grid-template-columns: 44px 30px 52px 32px 1fr 32px;
+  align-items: center; gap: 8px;
+  padding: 6px 10px; border-radius: 10px;
+  background: var(--surface); font-size: 0.9rem;
+}
+.day-name { font-weight: 600; }
+.day .hi { font-weight: 600; text-align: right; }
+.day .lo { color: var(--muted); text-align: right; }
+.range { position: relative; height: 6px; border-radius: 3px; background: var(--track); }
+.range span {
+  position: absolute; top: 0; bottom: 0; border-radius: 3px;
+  background: linear-gradient(90deg, #7dd3fc, var(--accent), #fb923c);
+}
+
+.app-footer { text-align: center; margin-top: 24px; font-size: 0.85rem; color: var(--muted); }
+.app-footer a { color: var(--link); }
+
+.visually-hidden {
+  position: absolute; width: 1px; height: 1px; overflow: hidden;
+  clip: rect(0 0 0 0); white-space: nowrap;
+}
+
+@media (max-width: 480px) {
+  .temperature { font-size: 3.2rem; }
+  .weather-icon { width: 76px; height: 76px; }
+  .app-header h1 { font-size: 1.7rem; }
+  .subtitle { font-size: 0.85rem; }
+  .header-controls { flex-direction: column; align-items: flex-end; gap: 6px; }
+  .search button[type="submit"] { padding: 0 14px; }
+  .day { grid-template-columns: 38px 28px 46px 28px 1fr 28px; gap: 6px; padding: 6px 8px; }
+}
+
+/* ---------- Next.js version extras ---------- */
+.error-body { display: flex; flex-direction: column; gap: 4px; }
+.retry {
+  align-self: flex-start;
+  margin-top: 6px;
+  padding: 6px 14px;
+  border-radius: 8px;
+  border: 1px solid var(--error-border);
+  background: transparent;
+  color: var(--text);
+  cursor: pointer;
+  font: inherit;
+}
+.retry:hover { background: var(--surface); }
+.hint { text-align: center; color: var(--muted); margin-top: 8px; }
+
+.small { font-size: 0.85rem; }
+
+/* ---------- Header toggles (units + theme) ---------- */
+.header-controls { display: flex; gap: 8px; align-items: center; flex-shrink: 0; }
+.unit-toggle, .theme-toggle {
+  display: flex; flex-shrink: 0; padding: 3px; border-radius: 999px;
+  background: var(--card); border: 1px solid var(--border);
+}
+.unit-toggle button, .theme-toggle button {
+  border: none; background: transparent; color: var(--text);
+  font: inherit; font-weight: 600; padding: 6px 12px; border-radius: 999px; cursor: pointer;
+}
+.unit-toggle button[aria-pressed="true"], .theme-toggle button[aria-pressed="true"] { background: var(--accent); color: #222; }
+.theme-toggle button { padding: 6px 8px; display: grid; place-items: center; }
+
+/* ---------- Suggestions dropdown ---------- */
+.suggestions {
+  position: absolute; z-index: 10; top: calc(100% + 6px); left: 0; right: 0;
+  list-style: none; padding: 6px; border-radius: 12px;
+  background: var(--field-bg); color: var(--field-text); border: 1px solid var(--border); box-shadow: 0 12px 32px rgba(0, 0, 0, 0.25);
+  max-height: 300px; overflow-y: auto;
+}
+.suggestions li {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 12px; border-radius: 8px; cursor: pointer;
+}
+.suggestions li.active { background: var(--menu-active); }
+.suggestions .muted { color: var(--field-muted); }
+.suggestions .flag { font-size: 1.2rem; }
+
+/* ---------- Recent searches ---------- */
+.recent { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 16px; }
+.chip {
+  display: inline-flex; align-items: center;
+  border-radius: 999px; background: var(--card); border: 1px solid var(--border);
+  font-size: 0.85rem; overflow: hidden;
+}
+.chip button { border: none; background: transparent; color: var(--text); font: inherit; cursor: pointer; padding: 5px 4px 5px 12px; }
+.chip .chip-x { padding: 5px 10px 5px 6px; color: var(--muted); }
+.chip button:hover { color: var(--link); }
+
+button:focus-visible, .hourly:focus-visible { outline: 3px solid var(--link); outline-offset: 2px; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}
