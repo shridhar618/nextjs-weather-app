@@ -2,7 +2,15 @@
 
 A Next.js app where a user searches for a city and sees the current weather, a matching weather icon, an hourly and 6-day forecast. It shows a loading state while data is fetched and clear error messages when the city is invalid or the data can't be fetched.
 
-![Screenshot](public/screenshots/success.png)
+<p align="center">
+  <img src="public/screenshots/success.png" alt="Light theme: current weather, hourly and 6-day forecast for Paris" width="360">
+  &nbsp;
+  <img src="public/screenshots/dark.png" alt="Dark theme: Tokyo at night" width="360">
+</p>
+
+| Search suggestions | Loading | Error |
+|---|---|---|
+| ![Suggestions dropdown separating Paris, France from Paris, Texas](public/screenshots/suggestions.png) | ![Loading spinner while fetching](public/screenshots/loading.png) | ![City not found error](public/screenshots/error.png) |
 
 ## Features
 
