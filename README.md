@@ -1,5 +1,7 @@
 # Weather Now — Weather Information App (Next.js)
 
+![Next.js](https://img.shields.io/badge/Next.js-000000?logo=nextdotjs&logoColor=white) ![Open-Meteo](https://img.shields.io/badge/Open--Meteo-FF6B00)
+
 A Next.js app where a user searches for a city and sees the current weather, a matching weather icon, an hourly and 6-day forecast. It shows a loading state while data is fetched and clear error messages when the city is invalid or the data can't be fetched.
 
 <p align="center">
